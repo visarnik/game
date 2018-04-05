@@ -32,7 +32,6 @@ namespace ShaceShip
             Console.SetWindowSize(30, 40);
             Console.SetBufferSize(30, 40);
             int counter = 0;
-            int a;
 
             while (true)
             {
@@ -71,9 +70,9 @@ namespace ShaceShip
 
         private static void GenerateEnemies()
         {
-            //enemies.Add(new Position(15, 0));
+            enemies.Add(new Position(15, 0));
             //enemies.Add(new Position(20, 0));
-            enemies.Add(new Position(enemy.Next(30), 0));
+            //enemies.Add(new Position(enemy.Next(30), 0));
         }
 
         private static void UpdateField()
@@ -87,13 +86,17 @@ namespace ShaceShip
         {
             if (enemies.Count >= 1)
             {
-                for (int i = 0; i <= (enemies.Count - 1); i++)
+                for (int i = 0; i < (enemies.Count); i++)
                 {
-                    for (int j = 0; j <= bullets.Count - 1; j++)
+                    for (int j = 0; j < bullets.Count; j++)
                     {
                         if ((bullets[j].col == enemies[i].col) && (enemies[i].rol > bullets[j].rol))
                         {
                             enemies.Remove(enemies[i]);
+                            if (enemies.Count == 0)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
