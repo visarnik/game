@@ -25,14 +25,15 @@ namespace ShaceShip
         static List<Position> bullets = new List<Position>();
         static List<Position> enemies = new List<Position>();
         static Random enemy = new Random();
+        static int destoiedEnemies = 0;
 
 
         static void Main(string[] args)
         {
-            Console.SetWindowSize(30, 40);
-            Console.SetBufferSize(30, 40);
+            Console.SetWindowSize(40, 40);
+            Console.SetBufferSize(40, 40);
             int counter = 0;
-
+            
             while (true)
             {
                 UpdateField();
@@ -44,7 +45,7 @@ namespace ShaceShip
 
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKeyInfo userKey = Console.ReadKey();
+                    ConsoleKeyInfo userKey = Console.ReadKey(true);
 
                     if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 0)
                     {
@@ -114,6 +115,7 @@ namespace ShaceShip
                     if (enemies[i].rol > Console.WindowHeight - 1)
                     {
                         enemies.Remove(enemies[i]);
+                        destoiedEnemies++;
                     }
                 }
             }
@@ -140,6 +142,14 @@ namespace ShaceShip
             DrawShot();
             DrawShip();
             DrawEnemy();
+            DrawScoreBoard();
+        }
+
+        private static void DrawScoreBoard()
+        {
+            Console.SetCursorPosition(30, 15);
+            Console.WriteLine($"{"SCORE: "}{destoiedEnemies}");
+            // TO DO
         }
 
         private static void DrawEnemy()
