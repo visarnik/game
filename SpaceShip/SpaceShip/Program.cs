@@ -36,7 +36,7 @@ namespace ShaceShip
             while (true)
             {
                 UpdateField();
-                if (counter == 20)
+                if (counter == 2)
                 {
                     GenerateEnemies();
                     counter = 0;
@@ -72,7 +72,7 @@ namespace ShaceShip
         {
             //enemies.Add(new Position(15, 0));
             //enemies.Add(new Position(20, 0));
-            enemies.Add(new Position(enemy.Next(30), 0));
+            enemies.Add(new Position(enemy.Next(28), 0));
         }
 
         private static void UpdateField()
