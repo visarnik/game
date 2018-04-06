@@ -49,8 +49,11 @@ namespace ShaceShip
 
                     if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 0)
                     {
+                        Console.SetCursorPosition(30, 20);
+                        Console.WriteLine(userKey.ToString());
                         ship = new Position(ship.col - 1, ship.rol);
                     }
+
                     if ((userKey.Key == ConsoleKey.RightArrow) && ship.col < Console.WindowWidth - 3)
                     {
                         ship = new Position(ship.col + 1, ship.rol);
@@ -92,6 +95,7 @@ namespace ShaceShip
                         if ((bullets[i].col == enemies[j].col) && (enemies[j].rol > bullets[i].rol))
                         {
                             enemies.Remove(enemies[j]);
+                            destroiedEnemies++;
                             if (enemies.Count == 0)
                             {
                                 break;
@@ -113,7 +117,6 @@ namespace ShaceShip
                     if (enemies[i].rol > Console.WindowHeight - 1)
                     {
                         enemies.Remove(enemies[i]);
-                        destroiedEnemies++;
                     }
                 }
             }
@@ -147,7 +150,6 @@ namespace ShaceShip
         {
             Console.SetCursorPosition(30, 15);
             Console.WriteLine($"{"SCORE: "}{destroiedEnemies}");
-            // TO DO
         }
 
         private static void DrawEnemy()
