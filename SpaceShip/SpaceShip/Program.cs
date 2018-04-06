@@ -25,7 +25,7 @@ namespace ShaceShip
         static List<Position> bullets = new List<Position>();
         static List<Position> enemies = new List<Position>();
         static Random enemy = new Random();
-        static int destoiedEnemies = 0;
+        static int destroiedEnemies = 0;
 
 
         static void Main(string[] args)
@@ -37,7 +37,7 @@ namespace ShaceShip
             while (true)
             {
                 UpdateField();
-                if (counter == 2)
+                if (counter == 15)
                 {
                     GenerateEnemies();
                     counter = 0;
@@ -71,8 +71,6 @@ namespace ShaceShip
 
         private static void GenerateEnemies()
         {
-            //enemies.Add(new Position(15, 0));
-            //enemies.Add(new Position(20, 0));
             enemies.Add(new Position(enemy.Next(28), 0));
         }
 
@@ -115,7 +113,7 @@ namespace ShaceShip
                     if (enemies[i].rol > Console.WindowHeight - 1)
                     {
                         enemies.Remove(enemies[i]);
-                        destoiedEnemies++;
+                        destroiedEnemies++;
                     }
                 }
             }
@@ -148,7 +146,7 @@ namespace ShaceShip
         private static void DrawScoreBoard()
         {
             Console.SetCursorPosition(30, 15);
-            Console.WriteLine($"{"SCORE: "}{destoiedEnemies}");
+            Console.WriteLine($"{"SCORE: "}{destroiedEnemies}");
             // TO DO
         }
 
