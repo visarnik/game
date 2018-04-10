@@ -21,7 +21,7 @@ namespace ShaceShip
 
     class Program
     {
-        static Position ship = new Position(15, 39);
+        static Position ship = new Position(15, 38);
         static List<Position> bullets = new List<Position>();
         static List<Position> enemies = new List<Position>();
         static Random enemy = new Random();
@@ -30,13 +30,14 @@ namespace ShaceShip
 
         static void Main(string[] args)
         {
-            Console.SetWindowSize(40, 40);
-            Console.SetBufferSize(40, 40);
+            Console.SetWindowSize(50, 40);
+            Console.SetBufferSize(50, 40);
             int counter = 0;
             
             while (true)
             {
                 UpdateField();
+                UpdateScores();
                 if (counter == 15)
                 {
                     GenerateEnemies();
@@ -68,6 +69,14 @@ namespace ShaceShip
                 Console.Clear();
                 counter++;
             }
+        }
+
+        private static void UpdateScores()
+        {
+            Console.SetCursorPosition(42, 10);
+            Console.WriteLine(destroiedEnemies);
+            Console.SetCursorPosition(42, 12);
+            Console.WriteLine(destroiedEnemies);
         }
 
         private static void GenerateEnemies()
@@ -141,13 +150,35 @@ namespace ShaceShip
             DrawShot();
             DrawShip();
             DrawEnemy();
-            DrawScoreBoard();
+            DrawStaticContent();
         }
        
-        private static void DrawScoreBoard()
+        private static void DrawStaticContent()
         {
-            Console.SetCursorPosition(30, 15);
+            for (int j = 1; j < Console.WindowHeight - 1; j++)
+            {
+                for (int i = 0; i < 30; i+=29)
+                {
+                    Console.SetCursorPosition(i, j);
+                    Console.Write("*");
+                }
+
+            }
+
+            for (int i = 0; i < Console.WindowHeight; i+=Console.WindowHeight -1)
+            {
+                for (int j = 0; j < 30; j++)
+                {
+                    Console.SetCursorPosition(j, i);
+                    Console.Write("*");
+                }
+            }
+            
+            Console.SetCursorPosition(35, 10);
             Console.WriteLine($"{"SCORE: "}{destroiedEnemies}");
+            Console.SetCursorPosition(35, 12);
+            Console.WriteLine($"{"SHIPS: "}{destroiedEnemies}");
+
         }
 
         private static void DrawEnemy()
