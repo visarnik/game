@@ -42,15 +42,12 @@ namespace ShaceShip
                     GenerateEnemies();
                     counter = 0;
                 }
-
-                if (Console.KeyAvailable)
+                while (Console.KeyAvailable)
                 {
-                    ConsoleKeyInfo userKey = Console.ReadKey(true);
+                    ConsoleKeyInfo userKey = Console.ReadKey();
 
                     if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 0)
                     {
-                        Console.SetCursorPosition(30, 20);
-                        Console.WriteLine(userKey.ToString());
                         ship = new Position(ship.col - 1, ship.rol);
                     }
 
@@ -61,6 +58,7 @@ namespace ShaceShip
 
                     if (userKey.Key == ConsoleKey.Spacebar)
                     {
+
                         bullets.Add(new Position(ship.col, ship.rol - 1));
                     }
                 }
@@ -145,7 +143,7 @@ namespace ShaceShip
             DrawEnemy();
             DrawScoreBoard();
         }
-
+       
         private static void DrawScoreBoard()
         {
             Console.SetCursorPosition(30, 15);
