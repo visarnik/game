@@ -27,17 +27,18 @@ namespace ShaceShip
         static Random enemy = new Random();
         static int destroiedEnemies = 0;
 
-
         static void Main(string[] args)
         {
             Console.SetWindowSize(50, 40);
             Console.SetBufferSize(50, 40);
+            DrawStaticContent();
             int counter = 0;
             
             while (true)
             {
                 UpdateField();
                 UpdateScores();
+
                 if (counter == 15)
                 {
                     GenerateEnemies();
@@ -47,41 +48,41 @@ namespace ShaceShip
                 {
                     ConsoleKeyInfo userKey = Console.ReadKey();
 
-                    if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 0)
+                    if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 1)
                     {
                         ship = new Position(ship.col - 1, ship.rol);
                     }
 
-                    if ((userKey.Key == ConsoleKey.RightArrow) && ship.col < Console.WindowWidth - 3)
+                    if ((userKey.Key == ConsoleKey.RightArrow) && ship.col < 28)
                     {
                         ship = new Position(ship.col + 1, ship.rol);
                     }
 
                     if (userKey.Key == ConsoleKey.Spacebar)
                     {
-
                         bullets.Add(new Position(ship.col, ship.rol - 1));
                     }
                 }
 
                 Draw();
                 Thread.Sleep(100);
-                Console.Clear();
+                //Console.Clear();
                 counter++;
             }
         }
 
         private static void UpdateScores()
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.SetCursorPosition(42, 10);
-            Console.WriteLine(destroiedEnemies);
+            Console.Write(destroiedEnemies);
             Console.SetCursorPosition(42, 12);
-            Console.WriteLine(destroiedEnemies);
+            Console.Write(destroiedEnemies);
         }
 
         private static void GenerateEnemies()
         {
-            enemies.Add(new Position(enemy.Next(28), 0));
+            enemies.Add(new Position(enemy.Next(1,28), 1));
         }
 
         private static void UpdateField()
@@ -121,7 +122,7 @@ namespace ShaceShip
                 for (int i = 0; i <= (enemies.Count - 1); i++)
                 {
                     enemies[i] = new Position(enemies[i].col, enemies[i].rol + 1);
-                    if (enemies[i].rol > Console.WindowHeight - 1)
+                    if (enemies[i].rol > Console.WindowHeight - 2)
                     {
                         enemies.Remove(enemies[i]);
                     }
@@ -136,7 +137,7 @@ namespace ShaceShip
                 for (int i = (bullets.Count - 1); i >= 0; i--)
                 {
                     bullets[i] = new Position(bullets[i].col, bullets[i].rol - 1);
-                    if (bullets[i].rol < 0)
+                    if (bullets[i].rol < 1)
                     {
                         bullets.Remove(bullets[i]);
                     }
@@ -150,7 +151,6 @@ namespace ShaceShip
             DrawShot();
             DrawShip();
             DrawEnemy();
-            DrawStaticContent();
         }
        
         private static void DrawStaticContent()
@@ -159,8 +159,7 @@ namespace ShaceShip
             {
                 for (int i = 0; i < 30; i+=29)
                 {
-                    Console.SetCursorPosition(i, j);
-                    Console.Write("*");
+                    DrawSymbolAtPosition(i, j, '*', ConsoleColor.Green);
                 }
 
             }
@@ -173,34 +172,62 @@ namespace ShaceShip
                     Console.Write("*");
                 }
             }
-            
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.SetCursorPosition(35, 10);
-            Console.WriteLine($"{"SCORE: "}{destroiedEnemies}");
+            Console.Write($"{"SCORE: "}");
             Console.SetCursorPosition(35, 12);
-            Console.WriteLine($"{"SHIPS: "}{destroiedEnemies}");
+            Console.Write($"{"SHIPS: "}");
 
         }
 
         private static void DrawEnemy()
         {
-            enemies.ForEach(x => DrawSymbolAtPosition(x.col, x.rol, '@', ConsoleColor.Magenta));
+            foreach (var item in enemies)
+            {
+                DrawSymbolAtPosition(item.col, item.rol, '@', ConsoleColor.Magenta);
+                if (item.rol >= 2 && item.rol < Console.WindowHeight)
+                {
+                    if (item.rol == Console.WindowHeight -2)
+                    {
+                        DrawSymbolAtPosition(item.col, item.rol, ' ', ConsoleColor.Black);
+                    }
+                    DrawSymbolAtPosition(item.col, item.rol -1, ' ', ConsoleColor.Black);
+                }
+            }
         }
 
         private static void DrawShot()
         {
-            bullets.ForEach(x => DrawSymbolAtPosition(x.col, x.rol, '|', ConsoleColor.Yellow));
+            foreach (var item in bullets)
+            {
+                DrawSymbolAtPosition(item.col, item.rol, '|', ConsoleColor.Yellow);
+                if (item.rol >= 1)
+                {
+                    if (item.rol == 1)
+                    {
+                        DrawSymbolAtPosition(item.col, item.rol, ' ', ConsoleColor.Black);
+                    }
+                    DrawSymbolAtPosition(item.col, item.rol + 1, ' ', ConsoleColor.Black);
+                }
+            }
         }
 
         private static void DrawShip()
         {
-            if (ship.col > 0)
+            if (ship.col >= 1 && ship.col < 29)
             {
-                DrawSymbolAtPosition(ship.col - 1, ship.rol, '#', ConsoleColor.Black);
+
+                for (int i = ship.col - 1; i > 0; i--)
+                {
+                    DrawSymbolAtPosition(i, ship.rol, '#', ConsoleColor.Red);
+                }
+
+                for (int i = ship.col + 1 ; i < 29; i++)
+                {
+                    DrawSymbolAtPosition(i, ship.rol, '#', ConsoleColor.Blue);
+                }
             }
-            if (ship.col < Console.WindowWidth)
-            {
-                DrawSymbolAtPosition(ship.col + 1, ship.rol, '#', ConsoleColor.Black);
-            }
+
             DrawSymbolAtPosition(ship.col, ship.rol, '#', ConsoleColor.White);
         }
 
