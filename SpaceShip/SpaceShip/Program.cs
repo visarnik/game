@@ -26,49 +26,70 @@ namespace ShaceShip
         static List<Position> enemies = new List<Position>();
         static Random enemy = new Random();
         static int destroiedEnemies = 0;
-
+        
         static void Main(string[] args)
         {
+
+            var thread = new Thread(() =>
+            {
+                while (true)
+                {
+                    UpdateEnemies();
+                    Thread.Sleep(100);
+                }
+            });
+            
+
+
+
             Console.SetWindowSize(50, 40);
             Console.SetBufferSize(50, 40);
             DrawStaticContent();
             int counter = 0;
             
-            while (true)
+
+            var t2 = new Thread(() =>
             {
-                UpdateField();
-                UpdateScores();
-
-                if (counter == 15)
+                while (true)
                 {
-                    GenerateEnemies();
-                    counter = 0;
+                    UpdateField();
+                    UpdateScores();
+
+                    if (counter == 50)
+                    {
+                        GenerateEnemies();
+                        counter = 0;
+                    }
+                    while (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo userKey = Console.ReadKey();
+
+                        if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 1)
+                        {
+                            ship = new Position(ship.col - 1, ship.rol);
+                        }
+
+                        if ((userKey.Key == ConsoleKey.RightArrow) && ship.col < 28)
+                        {
+                            ship = new Position(ship.col + 1, ship.rol);
+                        }
+
+                        if (userKey.Key == ConsoleKey.Spacebar)
+                        {
+                            bullets.Add(new Position(ship.col, ship.rol - 1));
+                        }
+                    }
+
+                    Draw();
+                    Thread.Sleep(20);
+                    counter++;
                 }
-                while (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo userKey = Console.ReadKey();
+            });
+            thread.Start();
+            t2.Start();
+            thread.Join();
+            t2.Join();
 
-                    if ((userKey.Key == ConsoleKey.LeftArrow) && ship.col > 1)
-                    {
-                        ship = new Position(ship.col - 1, ship.rol);
-                    }
-
-                    if ((userKey.Key == ConsoleKey.RightArrow) && ship.col < 28)
-                    {
-                        ship = new Position(ship.col + 1, ship.rol);
-                    }
-
-                    if (userKey.Key == ConsoleKey.Spacebar)
-                    {
-                        bullets.Add(new Position(ship.col, ship.rol - 1));
-                    }
-                }
-
-                Draw();
-                Thread.Sleep(100);
-                //Console.Clear();
-                counter++;
-            }
         }
 
         private static void UpdateScores()
@@ -88,7 +109,7 @@ namespace ShaceShip
         private static void UpdateField()
         {
             UpdateShots();
-            UpdateEnemies();
+            //UpdateEnemies();
             RemoveDestroyedEnmy();
         }
 
@@ -117,17 +138,21 @@ namespace ShaceShip
 
         private static void UpdateEnemies()
         {
-            if (enemies.Count != 0)
+            lock (enemies)
             {
-                for (int i = 0; i <= (enemies.Count - 1); i++)
+                if (enemies.Count != 0)
                 {
-                    enemies[i] = new Position(enemies[i].col, enemies[i].rol + 1);
-                    if (enemies[i].rol > Console.WindowHeight - 2)
+                    for (int i = 0; i <= (enemies.Count - 1); i++)
                     {
-                        enemies.Remove(enemies[i]);
+                        enemies[i] = new Position(enemies[i].col, enemies[i].rol + 1);
+                        if (enemies[i].rol > Console.WindowHeight - 2)
+                        {
+                            enemies.Remove(enemies[i]);
+                        }
                     }
                 }
             }
+
         }
 
         private static void UpdateShots()
@@ -182,20 +207,22 @@ namespace ShaceShip
 
         private static void DrawEnemy()
         {
-            foreach (var item in enemies)
+            lock (enemies)
             {
-                DrawSymbolAtPosition(item.col, item.rol, '@', ConsoleColor.Magenta);
-                if (item.rol >= 2 && item.rol < Console.WindowHeight)
+                foreach (var item in enemies)
                 {
-                    if (item.rol == Console.WindowHeight -2)
+                    DrawSymbolAtPosition(item.col, item.rol, '@', ConsoleColor.Magenta);
+                    if (item.rol >= 2 && item.rol < Console.WindowHeight)
                     {
-                        DrawSymbolAtPosition(item.col, item.rol, ' ', ConsoleColor.Black);
+                        if (item.rol == Console.WindowHeight - 2)
+                        {
+                            DrawSymbolAtPosition(item.col, item.rol, ' ', ConsoleColor.Black);
+                        }
+                        DrawSymbolAtPosition(item.col, item.rol - 1, ' ', ConsoleColor.Black);
                     }
-                    DrawSymbolAtPosition(item.col, item.rol -1, ' ', ConsoleColor.Black);
                 }
             }
         }
-
         private static void DrawShot()
         {
             foreach (var item in bullets)
@@ -237,5 +264,5 @@ namespace ShaceShip
             Console.ForegroundColor = color;
             Console.Write(symbol);
         }
-    }
+    } 
 }
