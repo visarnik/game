@@ -29,8 +29,12 @@ namespace ShaceShip
         
         static void Main(string[] args)
         {
+            Console.SetWindowSize(50, 40);
+            Console.SetBufferSize(50, 40);
+            DrawStaticContent();
+            int counter = 0;
 
-            var thread = new Thread(() =>
+            var t1 = new Thread(() =>
             {
                 while (true)
                 {
@@ -39,15 +43,6 @@ namespace ShaceShip
                 }
             });
             
-
-
-
-            Console.SetWindowSize(50, 40);
-            Console.SetBufferSize(50, 40);
-            DrawStaticContent();
-            int counter = 0;
-            
-
             var t2 = new Thread(() =>
             {
                 while (true)
@@ -85,9 +80,10 @@ namespace ShaceShip
                     counter++;
                 }
             });
-            thread.Start();
+
+            t1.Start();
             t2.Start();
-            thread.Join();
+            t1.Join();
             t2.Join();
 
         }
@@ -121,7 +117,7 @@ namespace ShaceShip
                 {
                     for (int j = 0; j < enemies.Count; j++)
                     {
-                        if ((bullets[i].col == enemies[j].col) && (enemies[j].rol > bullets[i].rol))
+                        if ((bullets[i].col == enemies[j].col) && (enemies[j].rol >= bullets[i].rol))
                         {
                             enemies.Remove(enemies[j]);
                             destroiedEnemies++;
@@ -223,6 +219,7 @@ namespace ShaceShip
                 }
             }
         }
+
         private static void DrawShot()
         {
             foreach (var item in bullets)
